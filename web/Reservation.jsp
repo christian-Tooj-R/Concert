@@ -39,7 +39,7 @@
                     </optgroup>
                 </select>
                 <input type="hidden" value="<% out.print(((Categorie)tabCategorie[0]).getId()); %>" name="id">
-                <button class="btn btn-primary" type="button" <% out.print(valeur2); %> style="margin-top: 90px;margin-right: 8px;margin-left: -164px;" ><a href="Reservation.jsp?reserve=1" style="text-decoration: none;color: white;">Reserver</a></button>
+                <button class="btn btn-primary" type="button" <% out.print(valeur2); %> style="margin-top: 90px;margin-right: 8px;margin-left: -164px;" ><a href="Reservation.jsp?reserve=1&&id=<% out.print(((Categorie)tabCategorie[0]).getId()); %>" style="text-decoration: none;color: white;">Reserver</a></button>
                 
                 <button class="btn btn-primary" type="submit" <% out.print(valeur1); %> style="margin-top: 90px;margin-right: 8px;margin-left: -164px;" value="0" name="attente">Confirmer Maintenant</button>
                 <button class="btn btn-primary" type="submit" <% out.print(valeur1); %> style="margin-top: 90px;margin-right: 8px;" value="1" name="attente">Confirmer Plus tard</button>

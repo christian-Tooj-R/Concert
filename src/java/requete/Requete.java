@@ -94,9 +94,15 @@ public class Requete {
     }
 
     /******** insert */
-    public void insert(Connection connect) throws Exception {
-        if (connect == null || connect.isClosed()) {
+    public void insert(Connection conn) throws Exception {
+        Connection connect=null;
+        conn.setAutoCommit(false);
+        boolean ifnull=false;
+        if (conn == null || conn.isClosed()) {
             connect = new ConnectOracle().getConnection();
+            ifnull=true;
+        }else{
+            connect = conn;
         }
         connect.setAutoCommit(false);
         Statement stmt = connect.createStatement();
@@ -182,9 +188,10 @@ public class Requete {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            connect.commit();
-            stmt.close();
-            connect.close();
+            if(ifnull){
+                connect.commit();
+                connect.close();
+            }
         }
     }
 

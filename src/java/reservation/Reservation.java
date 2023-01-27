@@ -4,7 +4,9 @@
  */
 package reservation;
 
+import chrono.Chrono;
 import connection.ConnectOracle;
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -16,78 +18,71 @@ import requete.Requete;
  *
  * @author Christian
  */
-public class Reservation extends Requete{
-   String Id; 
-   Date Currdate;
-   String Heure;
-   int Attente;
+public class Reservation extends Requete {
+    String Id;
+    Date Currdate;
+    String Heure;
+    int Attente;
 
     public Reservation() {
     }
 
-    public Reservation(String zone,String Place, String Attente) throws Exception{
+    /*public void testThread() {
+        System.out.println("Miandry 5 seconde bg");
+        java.util.Timer chrono1 = new java.util.Timer();
+        chrono1.schedule(new Chrono(5,null), 1000, 1000);
+    }*/ public String getTable() throws Exception {
+        Object[] obj = this.select(new ConnectOracle().getConnection(), "");
+
+        String table = "", line = "<tr>", head = "<th>";
+
+        Field[] field = this.getClass().getDeclaredFields();
+
+        for (int j = 0; j < field.length-1; j++) {
+            if (j == 0) {
+                head = head + field[j].getName() + "</th>";
+            } else {
+                head = head + "<th>" + field[j].getName() + "</th>";
+            }
+        }
+        for (int i = 0; i < obj.length; i++) {
+            for (int j = 0; j < field.length-1; j++) {
+                table = table + "<td>"
+                        + obj[i].getClass().getMethod("get" + field[j].getName()).invoke(obj[i]) + "</td>";
+            }
+            if (i == 0) {
+                line = line + table + "</tr>";
+            } else {
+                line = line + "<tr>" + table + "</tr>";
+            }
+            table = "";
+        }
+        return "<thead><tr>" + head + "</tr></thead><tbody>" + line + "</tbody>";
+
+    }
+    
+
+    public Reservation(String zone, String Place, String Attente) throws Exception {
         this.setId(zone + Place);
         this.setCurrdate(null);
         this.setHeure(null);
         this.setAttente(Attente);
     }
+    public void Creer(Connection connect,int delai) throws Exception {
+        if (connect == null) {
+            connect = new ConnectOracle().getConnection();
+        }
+        this.insert(connect);
+        if(this.getAttente()==1){
+            java.util.Timer chrono1 = new java.util.Timer();
+            chrono1.schedule(new Chrono(delai,connect), 1000, 1000);
+        }else{
+            connect.commit();
+            connect.close();
+        }
+    }
 
-    public void Delai(Connection connect,int duree)throws Exception{
-        Reservation reserve=new Reservation();
-        reserve.setAttente(1);
-        Object[] obj = reserve.select(connect,"");
-        for(Object o : obj){
-            if(verif(o,duree)){
-            Reservation reserv=new Reservation();
-                reserv.setHeure(((Reservation)o).getHeure());
-                reserv.delete(connect);
-            }
-        }
-    }
-    public boolean verif(Object o,int time){
-        if(getDiffTime(((Reservation)o).getHeure(),this.getHeure()) == time){
-            return true;
-        }
-        return false;
-    }
-   public void Creer(Connection connect)throws Exception{
-       if (connect == null || connect.isClosed()) {
-             connect = new ConnectOracle().getConnection();
-       }
-       this.insert(connect);
-       if(!connect.isClosed()){
-           connect.close();
-       }
-   }
-    public int sum(int[] tab) {
-        int rep = tab[0];
-        for (int i = 1; i < tab.length; i++) {
-            rep = rep + tab[i];
-        }
-        return rep;
-    }
-   public int getDiffTime(String ancien, String recent) {
-        String[] anc = ancien.split(":");
-        String[] rec = recent.split(":");
-        int i = 0;
-        int calc = 10000;
-        int[] a = new int[anc.length];
-        int[] b = new int[anc.length];
-        int less = 0;
-        while (i < a.length) {
-            a[i] = Integer.parseInt(anc[i]) * calc;
-            b[i] = Integer.parseInt(rec[i]) * calc;
-            if (a[1] != b[1]) {
-                less = 39 * Integer.parseInt(rec[1]);
-            }
-            calc = calc / 100;
-            i++;
-        }
-        if ((sum(b) - sum(a)) - less <= 0) {
-            return 0;
-        }
-        return (sum(b) - sum(a)) - less;
-    }
+
     public String getId() {
         return Id;
     }
@@ -101,12 +96,12 @@ public class Reservation extends Requete{
     }
 
     public void setCurrdate(Date Currdate) throws Exception {
-        if(Currdate != null){
+        if (Currdate != null) {
             this.Currdate = Currdate;
-        }else{
-        Connection connect=null;
+        } else {
+            Connection connect = null;
             if (connect == null || connect.isClosed()) {
-             connect = new ConnectOracle().getConnection();
+                connect = new ConnectOracle().getConnection();
             }
             connect.setAutoCommit(false);
             Statement stmt = connect.createStatement();
@@ -123,38 +118,39 @@ public class Reservation extends Requete{
         return Heure;
     }
 
-    public void setHeure(String Heure) throws Exception{
-      /*  if(!Currdate.equals(null)){
-            this.Heure = Heure;
-            System.out.println("Ato ndray ehh");
-        }else{*/
-        Connection connect=null;
-            if (connect == null || connect.isClosed()) {
-             connect = new ConnectOracle().getConnection();
-            }
-            System.out.println("Tena nakato");
-            connect.setAutoCommit(false);
-            Statement stmt = connect.createStatement();
-            ResultSet res = stmt.executeQuery("select to_char(sysdate,'HH24:MI:SS AM') from dual");
-            res.next();
-            String Hours = res.getString(1);
-            stmt.close();
-            connect.close();
-            this.Heure = Hours;
-        //}
+    public void setHeure(String Heure) throws Exception {
+        /*
+         * if(!Currdate.equals(null)){
+         * this.Heure = Heure;
+         * System.out.println("Ato ndray ehh");
+         * }else{
+         */
+        Connection connect = null;
+        if (connect == null || connect.isClosed()) {
+            connect = new ConnectOracle().getConnection();
+        }
+        System.out.println("Tena nakato");
+        connect.setAutoCommit(false);
+        Statement stmt = connect.createStatement();
+        ResultSet res = stmt.executeQuery("select to_char(sysdate,'HH24:MI:SS AM') from dual");
+        res.next();
+        String Hours = res.getString(1);
+        stmt.close();
+        connect.close();
+        this.Heure = Hours;
+        // }
     }
 
     public int getAttente() {
         return Attente;
     }
 
-    
     public void setAttente(String Attente) {
         setAttente(Integer.parseInt(Attente));
     }
-    
+
     public void setAttente(int Attente) {
         this.Attente = Attente;
     }
-    
+
 }

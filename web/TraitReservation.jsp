@@ -6,10 +6,12 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="reservation.Reservation"%>
+<%@page import="connection.ConnectOracle"%>
+<%@page import="java.sql.Connection"%>
 <%
-    
+    Connection connect=new ConnectOracle().getConnection(); 
     Reservation reservation=new Reservation(request.getParameter("id"),request.getParameter("num"),request.getParameter("attente"));
-    reservation.Creer(null);
-    response.sendRedirect("Reservation.jsp");
+    reservation.Creer(connect,5);
+    response.sendRedirect("Reservation.jsp?id="+request.getParameter("id"));
     
 %>

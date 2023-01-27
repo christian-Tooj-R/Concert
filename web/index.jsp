@@ -32,7 +32,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6" style="margin-left: 596px;width: 350.8px;height: 248px;margin-top: 137px;"><label class="col-form-label">Effectuez une Reservation en cliquant sur une zone</label></div>
+            <div class="col-md-6" style="margin-left: 596px;width: 350.8px;height: 248px;margin-top: 137px;">
+                <label class="col-form-label">Effectuez une Reservation en cliquant sur une zone</label>
+                <button class="btn btn-primary" type="button" style="margin-top: 90px;margin-right: 8px;" >
+                    <a href="ListeReservationAttente.jsp?attente=1" style="text-decoration: none;color: white;">Voir Liste Reservation en cours...</a>
+                </button>
+            </div>
         </div>
     </div>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>

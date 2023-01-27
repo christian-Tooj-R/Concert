@@ -4,6 +4,7 @@
  */
 package categorie;
 
+import java.sql.Connection;
 import requete.Requete;
 
 /**
@@ -16,6 +17,7 @@ public class Place extends Requete{
    int PlacePrise;
    double Prix;
 
+   
     public String getId() {
         return Id;
     }

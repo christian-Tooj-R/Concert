@@ -4,6 +4,7 @@
  */
 package main;
 
+
 import reservation.Reservation;
 
 /**
@@ -13,8 +14,10 @@ import reservation.Reservation;
 public class Main {
     public static void main(String[] args){
         try {
-            Reservation reservation=new Reservation("A","2","0");
-            reservation.Creer(null);
+            Reservation reservation=new Reservation();
+           // reservation.setAttente(1);
+            reservation.print(reservation.select(null, ""));
+          //  reservation.testThread();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
