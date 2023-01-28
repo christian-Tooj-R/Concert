@@ -33,7 +33,7 @@ public class Reservation extends Requete {
         chrono1.schedule(new Chrono(5,null), 1000, 1000);
     }*/ public String getTable() throws Exception {
         Object[] obj = this.select(new ConnectOracle().getConnection(), "");
-
+        this.print(obj);
         String table = "", line = "<tr>", head = "<th>";
 
         Field[] field = this.getClass().getDeclaredFields();
@@ -65,21 +65,23 @@ public class Reservation extends Requete {
     public Reservation(String zone, String Place, String Attente) throws Exception {
         this.setId(zone + Place);
         this.setCurrdate(null);
-        this.setHeure(null);
+        this.setHour(null);
         this.setAttente(Attente);
     }
+    
     public void Creer(Connection connect,int delai) throws Exception {
         if (connect == null) {
             connect = new ConnectOracle().getConnection();
         }
         this.insert(connect);
-        if(this.getAttente()==1){
-            java.util.Timer chrono1 = new java.util.Timer();
-            chrono1.schedule(new Chrono(delai,connect), 1000, 1000);
-        }else{
-            connect.commit();
-            connect.close();
-        }
+         
+        connect.commit();
+        connect.close();
+        
+        java.util.Timer chrono1 = new java.util.Timer();
+        chrono1.schedule(new Chrono(delai,this.getHeure()), 1000, 1000);
+            
+            
     }
 
 
@@ -95,6 +97,11 @@ public class Reservation extends Requete {
         return Currdate;
     }
 
+    
+    public void setHeure(String Heure) {
+        this.Heure = Heure;
+    }
+    
     public void setCurrdate(Date Currdate) throws Exception {
         if (Currdate != null) {
             this.Currdate = Currdate;
@@ -118,7 +125,7 @@ public class Reservation extends Requete {
         return Heure;
     }
 
-    public void setHeure(String Heure) throws Exception {
+    public void setHour(String Heure) throws Exception {
         /*
          * if(!Currdate.equals(null)){
          * this.Heure = Heure;

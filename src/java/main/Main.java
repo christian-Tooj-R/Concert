@@ -5,6 +5,8 @@
 package main;
 
 
+import connection.ConnectOracle;
+import java.sql.Connection;
 import reservation.Reservation;
 
 /**
@@ -14,10 +16,13 @@ import reservation.Reservation;
 public class Main {
     public static void main(String[] args){
         try {
+            Connection connect=new ConnectOracle().getConnection();
             Reservation reservation=new Reservation();
-           // reservation.setAttente(1);
-            reservation.print(reservation.select(null, ""));
-          //  reservation.testThread();
+         //   reservation.print(reservation.select(null, ""));
+          //  reservation.Creer(connect, 5);
+            reservation.setHeure("000");
+          //  System.out.println(reservation.getAttente());
+            reservation.delete(connect);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

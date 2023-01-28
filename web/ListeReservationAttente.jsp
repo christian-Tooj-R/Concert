@@ -8,7 +8,8 @@
 <%@page import="reservation.Reservation"%>
 <%
     Reservation reservation=new Reservation();
-    reservation.setId(request.getParameter("attente"));
+    out.print(request.getParameter("attente"));
+    reservation.setAttente(request.getParameter("attente"));
 %>
 <!DOCTYPE html>
 <html>
@@ -23,8 +24,7 @@
 <body style="height: 603px;">
     <div class="table-responsive">
         <table class="table">
-            <%// out.print(new Fonction().getTable(etatstock)); %>
-            <% out.print(reservation.getTable()); %>
+            <%   out.print(reservation.getTable());  %>
         </table>
     </div>
     </body>

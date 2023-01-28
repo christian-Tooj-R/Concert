@@ -184,7 +184,7 @@ public class Requete {
                         "insert into " + this.getClass().getSimpleName() + "(" + tab_vaovao + ") values(" + values
                                 + ")");
             }
-
+           
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -289,32 +289,27 @@ public class Requete {
         try {
 
             stmt = connect.createStatement();
+        //    stmt.executeUpdate();
             Field[] field = this.getClass().getDeclaredFields();
-
+            String req="delete from " + this.getClass().getSimpleName();
+            String where= " ";
             for (int j = 0; j < field.length; j++) {
-                if (field[j].getType().getName() == "int"
+                System.out.println("Filida  "+field[j].getType().getName());
+                if (field[j].getType().getName().equals("int")
                         && ((int) this.getClass().getMethod("get" + field[j].getName()).invoke(this) != 0)) {
-                    System.out.println("delete from " + this.getClass().getSimpleName() + " where " + field[j].getName()
-                            + " = " + this.getClass().getMethod("get" + field[j].getName()).invoke(this));
-                    stmt.executeUpdate("delete from " + this.getClass().getSimpleName() + " where " + field[j].getName()
-                            + " = " + this.getClass().getMethod("get" + field[j].getName()).invoke(this));
-                } else if (field[j].getType().getName() == "java.lang.String"
+                    where = " where "+field[j].getName() + " = " + this.getClass().getMethod("get" + field[j].getName()).invoke(this);
+                }else if (field[j].getType().getName().equals("java.lang.String")
                         && (this.getClass().getMethod("get" + field[j].getName()).invoke(this) != null)) {
-                    System.out.println("delete from " + this.getClass().getSimpleName() + " where " + field[j].getName()
-                            + " = \'" + this.getClass().getMethod("get" + field[j].getName()).invoke(this) + "\'");
-                    stmt.executeUpdate("delete from " + this.getClass().getSimpleName() + " where " + field[j].getName()
-                            + " = \'" + this.getClass().getMethod("get" + field[j].getName()).invoke(this) + "\'");
-                } else {
-                    System.out.println("delete from " + this.getClass().getSimpleName());
-                    stmt.executeUpdate("delete from " + this.getClass().getSimpleName());
-                    break;
+                    where = " where "+field[j].getName() + " = \'" + this.getClass().getMethod("get" + field[j].getName()).invoke(this)+ "\'";
                 }
             }
-
+            System.out.println(req + where);
+            stmt.executeUpdate(req + where);
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
-            connect.close();
+            
+            connect.commit();
             stmt.close();
             connect.close();
         }

@@ -4,23 +4,32 @@ import java.util.TimerTask;
 
 import connection.*;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import reservation.Reservation;
 
 public class Chrono extends TimerTask {
     int counter;
     Connection connect;
-
-    public Chrono(int temps,Connection conn) {
+    String heure;
+    Reservation reservation;
+    public Chrono(int temps,String hours) {
         this.counter=temps;
-        this.connect=conn;
+        this.heure=hours;
+        this.reservation=new Reservation();
     }
 
 
     @Override
     public void run() {
         try {
+            this.reservation.setAttente(1);
+            this.reservation.setHour(this.heure);
+           Object[] obj = this.reservation.select(null,"Heure");
            if(this.counter == 0){
-               this.connect.rollback();
-               this.connect.close();
+               Reservation reserve=new Reservation();
+               reserve.setHeure(((Reservation)obj[0]).getHeure());
+               reserve.delete(null);
                this.cancel();
            }
             this.counter--;
@@ -29,6 +38,8 @@ public class Chrono extends TimerTask {
         }
 
     }
+    
+    
 
 
 }
